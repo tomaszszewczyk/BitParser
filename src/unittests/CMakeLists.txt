@@ -1,5 +1,0 @@
-createTest(test_bit_parser      test_bit_parser.c       ${CMAKE_CURRENT_LIST_DIR}/..)
-createTest(test_u_parser_little test_u_parser_little.c  ${CMAKE_CURRENT_LIST_DIR}/..)
-createTest(test_stream_big      test_stream_big.c       ${CMAKE_CURRENT_LIST_DIR}/..)
-createTest(test_stream_little   test_stream_little.c    ${CMAKE_CURRENT_LIST_DIR}/..)
-createTest(test_u_parser_big    test_u_parser_big.c     ${CMAKE_CURRENT_LIST_DIR}/..)

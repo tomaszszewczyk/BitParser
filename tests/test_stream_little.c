@@ -27,8 +27,9 @@
 
 #include <stddef.h>
 #include <stdint.h>
+#include <string.h>
 
-#include "Stream.c"
+#include "Stream.h"
 
 #define BUFFER_SIZE 8
 
@@ -37,7 +38,7 @@ static uint8_t buffer[BUFFER_SIZE];
 
 void setUp(void) {
     memset(buffer, 0, BUFFER_SIZE);
-    Stream_Init(&stream, buffer, BUFFER_SIZE, BIG);
+    Stream_Init(&stream, buffer, BUFFER_SIZE, LITTLE);
 }
 
 void test_size(void) {
@@ -67,7 +68,7 @@ void test_seek(void) {
 
 void test_seek_bits(void) {
     uint8_t new_data[] = {0xAB};
-    uint8_t expected   = 0x0B;
+    uint8_t expected   = 0x0A;
     uint8_t read_data  = 0;
 
     memcpy(buffer, new_data, sizeof(new_data));
@@ -83,7 +84,7 @@ void test_seek_bits(void) {
 
 void test_seek_bits_in_byte(void) {
     uint8_t new_data[] = {0xFF, 0xAB};
-    uint8_t expected   = 0x0B;
+    uint8_t expected   = 0x0A;
     uint8_t read_data  = 0;
 
     memcpy(buffer, new_data, sizeof(new_data));
@@ -133,11 +134,11 @@ void test_read_two_times(void) {
 void test_read_too_much(void) {
     uint8_t read[BUFFER_SIZE + 1];
     Status_T result = Stream_Read(&stream, read, sizeof(read));
-    TEST_ASSERT_EQUAL(ERROR_STREAM_TOO_SHORT,result);
+    TEST_ASSERT_EQUAL(ERROR_STREAM_TOO_SHORT, result);
 }
 
 void test_read_half_byte(void) {
-    uint8_t new_data[] = {0xF0};
+    uint8_t new_data[] = {0x0F};
     uint8_t expected   = 0x0F;
     uint8_t read_data  = 0;
 
@@ -152,9 +153,9 @@ void test_read_half_byte(void) {
 
 void test_read_half_byte_and_byte(void) {
     uint8_t new_data[] = {0xAB, 0xCD};
-    uint8_t expected1  = 0x0A;
+    uint8_t expected1  = 0x0B;
     uint8_t read_data1 = 0;
-    uint8_t expected2  = 0xBC;
+    uint8_t expected2  = 0xDA;
     uint8_t read_data2 = 0;
 
     memcpy(buffer, new_data, sizeof(new_data));
@@ -170,10 +171,10 @@ void test_read_half_byte_and_byte(void) {
 }
 
 void test_read_half_byte_and_two_bytes(void) {
-    uint8_t  new_data[]  = {0x12, 0x34, 0x56};
-    uint8_t  expected1   = 0x01;
-    uint8_t  read_data1  = 0;
-    uint8_t  expected2[] = {0x23, 0x45};
+    uint8_t  new_data[] = {0x12, 0x34, 0x56};
+    uint8_t  expected1  = 0x02;
+    uint8_t  read_data1 = 0;
+    uint8_t  expected2[] = {0x41, 0x63};
     uint8_t  read_data2[sizeof(expected2)];
 
     memcpy(buffer, new_data, sizeof(new_data));
@@ -191,10 +192,8 @@ void test_read_half_byte_and_two_bytes(void) {
 }
 
 void test_read_one_and_some(void) {
-    // 1010 0111 1001 1111
-    uint8_t new_data[] = {0xA7, 0x9F};
-    // 0001 0100 1111 0011
-    uint8_t expected[] = {0x14, 0xF3};
+    uint8_t new_data[] = {0x34, 0xF2};
+    uint8_t expected[] = {0x34, 0x12};
     size_t  bit_count  = 13;
     uint8_t output[sizeof(expected)];
 
@@ -248,9 +247,9 @@ void test_write_too_much(void) {
     TEST_ASSERT_EQUAL(sizeof(first_data), Stream_Tell(&stream));
 }
 
-void test_write_half_a_byte_little(void) {
+void test_write_half_a_byte(void) {
     uint8_t new_data[] = {0xAB};
-    uint8_t expected[] = {0xB0};
+    uint8_t expected[] = {0x0B};
     size_t  bit_count  = 4;
     Status_T result = Stream_WriteBit(&stream, new_data, bit_count);
 
@@ -265,7 +264,7 @@ void test_write_half_a_byte_little(void) {
 
 void test_write_two_bits(void) {
     uint8_t new_data[] = {0b10101010};
-    uint8_t expected[] = {0b10000000};
+    uint8_t expected[] = {0b00000010};
     size_t  bit_count  = 2;
     Status_T result = Stream_WriteBit(&stream, new_data, bit_count);
 
@@ -280,7 +279,7 @@ void test_write_two_bits(void) {
 
 void test_write_one_and_a_half_byte(void) {
     uint8_t new_data[] = {0xBA, 0xDC};
-    uint8_t expected[] = {0xAD, 0xC0};
+    uint8_t expected[] = {0xBA, 0x0C};
     size_t  bit_count  = 12;
     Status_T result = Stream_WriteBit(&stream, new_data, bit_count);
 
@@ -294,10 +293,8 @@ void test_write_one_and_a_half_byte(void) {
 }
 
 void test_write_one_and_some(void) {
-    // 0011 0100 1111 0010
     uint8_t new_data[] = {0x34, 0xF2};
-    // 1010 0111 1001 0000
-    uint8_t expected[] = {0xA7, 0x90};
+    uint8_t expected[] = {0x34, 0x12};
     size_t  bit_count  = 13;
     Status_T result = Stream_WriteBit(&stream, new_data, bit_count);
 
@@ -313,7 +310,7 @@ void test_write_one_and_some(void) {
 void test_write_half_a_byte_and_a_byte(void) {
     uint8_t new_data1[] = {0xFF};
     uint8_t new_data2[] = {0xBB};
-    uint8_t expected[]  = {0xFB, 0xB0};
+    uint8_t expected[]  = {0xBF, 0x0B};
 
     size_t bit_count1 = 4;
     size_t bit_count2 = 8;
@@ -332,12 +329,9 @@ void test_write_half_a_byte_and_a_byte(void) {
 }
 
 void test_write_some_and_a_byte(void) {
-    // 1111 1111
     uint8_t new_data1[] = {0xFF};
-    // 1011 1011
     uint8_t new_data2[] = {0xBB};
-    // 1110 1110 1100
-    uint8_t expected[]  = {0xEE, 0xC0};
+    uint8_t expected[]  = {0xEF, 0x02};
 
     size_t bit_count1 = 2;
     size_t bit_count2 = 8;
@@ -358,7 +352,7 @@ void test_write_some_and_a_byte(void) {
 void test_write_half_a_byte_and_two_bytes(void) {
     uint8_t new_data1[] = {0xFF};
     uint8_t new_data2[] = {0xBB, 0xAA};
-    uint8_t expected[]  = {0xFB, 0xBA, 0xA0};
+    uint8_t expected[]  = {0xBF, 0xAB, 0x0A};
 
     size_t bit_count1 = 4;
     size_t bit_count2 = 16;
@@ -379,7 +373,7 @@ void test_write_half_a_byte_and_two_bytes(void) {
 void test_write_half_a_byte_and_regular_write(void) {
     uint8_t new_data1[] = {0xFF};
     uint8_t new_data2[] = {0xBB};
-    uint8_t expected[] = {0xF0, 0xBB};
+    uint8_t expected[] = {0x0F, 0xBB};
     size_t  bit_count  = 4;
     Status_T result1 = Stream_WriteBit(&stream, new_data1, bit_count);
     Status_T result2 = Stream_Write(&stream, new_data2, sizeof(new_data2));

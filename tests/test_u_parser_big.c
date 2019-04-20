@@ -25,8 +25,8 @@
 
 #include "unity.h"
 
-#include "UParser.c"
-#include "Stream.c"
+#include "UParser.h"
+#include "Stream.h"
 
 #include <string.h>
 

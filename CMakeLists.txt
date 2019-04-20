@@ -1,5 +1,6 @@
 cmake_minimum_required(VERSION 3.10)
 project(BitParser C)
 enable_testing()
-add_subdirectory(unity)
+add_subdirectory(test_framework)
+add_subdirectory(tests)
 add_subdirectory(src)

@@ -23,11 +23,13 @@
  *
  */
 
+#include <string.h>
+
 #include "unity.h"
 
-#include "BitParser.c"
-#include "UParser.c"
-#include "Stream.c"
+#include "BitParser.h"
+#include "UParser.h"
+#include "Stream.h"
 #include "BitParserError.h"
 
 void test_simple(void) {

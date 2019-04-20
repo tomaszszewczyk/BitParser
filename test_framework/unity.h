@@ -33,7 +33,7 @@ int suiteTearDown(int num_failures);
  * implementations of the above functions as weak symbols.  Note that on
  * some platforms (MinGW for example), weak function implementations need
  * to be in the same translation unit they are called from.  This can be
- * achieved by defining UNITY_INCLUDE_SETUP_STUBS before including unity.h. */
+ * achieved by defining UNITY_INCLUDE_SETUP_STUBS before including test_framework.h. */
 #ifdef UNITY_INCLUDE_SETUP_STUBS
   #ifdef UNITY_WEAK_ATTRIBUTE
     UNITY_WEAK_ATTRIBUTE void setUp(void) { }
