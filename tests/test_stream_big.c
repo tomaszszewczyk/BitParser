@@ -198,6 +198,7 @@ void test_read_one_and_some(void) {
     uint8_t expected[] = {0x14, 0xF3};
     size_t  bit_count  = 13;
     uint8_t output[sizeof(expected)];
+    memset(output, 0, sizeof(output));
 
     memcpy(buffer, new_data, sizeof(new_data));
     Status_T result = Stream_ReadBit(&stream, output, bit_count);
