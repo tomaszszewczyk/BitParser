@@ -60,6 +60,7 @@ extern "C" {
 
 #define BIT_FIELD_ARRAY_FIXED(_len, type, field)    {.field_type = ARRAY_FIXED,    .array_fixed_f    = {.offset = offsetof(type, field), .len = (_len)}}
 #define BIT_FIELD_ARRAY_VARIABLE(type, field, _len) {.field_type = ARRAY_VARIABLE, .array_variable_f = {.offset = offsetof(type, field), .len_offset = (offsetof(type, _len))}}
+#define BIT_FIELD_ARRAY_VARIABLE_WHOLE_MSG(type, field, _len) {.field_type = ARRAY_VARIABLE_WHOLE_MSG, .array_variable_f = {.offset = offsetof(type, field), .len_offset = (offsetof(type, _len))}}
 
 #define BIT_FIELD_ALIGN()    {.field_type = ALIGN}
 #define BIT_FIELD_PAD(width) {.field_type = PAD, .pad_f = {.bit = width}}
@@ -105,6 +106,7 @@ typedef enum {
     LEN,                /*!< size_t field type. */
     ARRAY_FIXED,        /*!< array with fixed size field type. */
     ARRAY_VARIABLE,     /*!< array with variable size field type. */
+    ARRAY_VARIABLE_WHOLE_MSG,
     ALIGN,              /*!< stream align control field field type. */
     PAD,                /*!< pad control field type. */
 } BitFieldType_T;
