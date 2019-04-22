@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.10)
+cmake_minimum_required(VERSION 3.9)
 project(BitParser C)
 enable_testing()
 add_subdirectory(test_framework)
