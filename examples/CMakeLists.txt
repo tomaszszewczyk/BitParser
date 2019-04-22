@@ -1,0 +1,2 @@
+add_executable(example_stream stream.c)
+target_link_libraries(example_stream BitParser)
