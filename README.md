@@ -170,6 +170,16 @@ int main() {
 }
 ```
 
+## How to build this project?
+
+To build this project you need to do the following:
+```bash
+$ mkdir build && cd build   # To create directory for your binary tree
+$ cmake ..                  # To configure project from cmake
+$ make && make check        # To build lib, examples and run tests
+```
+Also the project depends on CMake and Ruby.
+
 ## Contributing
 
 The only accepted kind of criticism here are pull requests, so feel free to add something from yourself ;)
