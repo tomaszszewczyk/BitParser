@@ -94,6 +94,43 @@ but with the width of 3 bytes. Notice how it is possible to insert signed data w
 
 ## BitParser
 
+On the top of these come BitParser, the module that allows you to leverage the advantages of whole lib and don't
+spend time on writing all this boring stuff by hand. You just need to define a struct representing message in memory
+and provide a description of serialized message format. The result is condensed in code and in memory! A message
+description takes only 12B of flash memory per field. Here is how you write the above with BitParser:
+```c
+#include "BitParser.h"
+
+typedef struct {
+    uint32_t a;
+    int32_t  b;
+    float    c;
+} MyMsg_T;
+
+static const BitField_T my_msg_desc[] = {
+    BIT_FIELD_U32(24, MyMsg_T, a),
+    BIT_FIELD_I32(24, MyMsg_T, b),
+    BIT_FIELD_S32(24, MyMsg_T, b),
+    BIT_FIELD_FLOAT(MyMsg_T, c),
+};
+
+int main() {
+    MyMsg_T data = {.a = 12654, .b = -13543, .c = 0.5};
+    uint8_t msg[13] = {0};
+
+    Stream_T stream;
+    Stream_Init(&stream, msg, sizeof(msg), BIG);
+
+    Status_T ret = BitParser_Serialize(my_msg_desc, ARRAY_LEN(my_msg_desc), &data, &stream);
+    if(ret != STATUS_SUCCESS)
+        return 1;
+
+    for(size_t i = 0; i < sizeof(msg); i++)
+        printf("0x%02X ", msg[i]);
+    printf("\n");
+}
+```
+
 ## Error handling
 
 All functions in BitParser library are written with care for error handling. They return a value to notify that
