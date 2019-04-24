@@ -10,7 +10,8 @@ to parse complicated binary encoded data. It handles for you endianness changes,
 two fashions of signed integers and provide simple engine for parsing messages using memory condensed descriptors.
 BitParser consist of three main elements, which provides three layers of abstraction. These elements are: Stream,
 UParser and BitParser, where Stream is most low level, UParser uses Stream and BitParser uses UParser. Each module can
-be used without higher level modules if desired. Here is some more detailed description of BitParser lib.
+be used without higher level modules if desired. Library is written to be suitable for embedded development, so 
+there is no dynamic allocation and other expensive operations. Here is some more detailed description of BitParser lib.
 
 ## Stream
 
@@ -24,7 +25,7 @@ bit level, ie. they let you read only one bit from a buffer and other functions 
 need bit level functionality you can use byte level functions letting the compiler to optimize away flash expensive
 binary operations, which is important in embedded development. Byte level functions are much faster too.
 
-Here is simple example of Stream:
+Here is simple example of Stream usage:
 ```c 
 #include "Stream.h"
 
@@ -49,5 +50,14 @@ write 4 bits of `data2`, `data3` and `data4`. The output is obviously `0x0A 0xCB
 No struct packing, no bitwise operations. Please also notice how easy it is to change endianness.
 
 ## UParser
+
+The next level of abstraction is UParser, which can be used for manual (but way simpler than ever) parser writing.
+It implements methods for writing and reading concrete types, including unsigned integers
+signed integers, floating point types, `size_t` and arrays. It even implements both two's complements and 
+sign and magnitude representation integer representation. It's all there! Again there are both bit and byte level
+functions so you pay only for what you use. UParser module use Stream so you get all features from Stream, including
+easy endianness swapping.
+
+Here is some example of UParser in action:
 
 ## BitParser
