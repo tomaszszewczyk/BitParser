@@ -169,3 +169,7 @@ int main() {
     printf("0x%02X 0x%02X 0x%02X\n", message[0], message[1], message[2]);
 }
 ```
+
+## Contributing
+
+The only accepted kind of criticism here are pull requests, so feel free to add something from yourself ;)
