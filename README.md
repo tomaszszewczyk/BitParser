@@ -93,3 +93,42 @@ Again we create some data we wish to serialize, then buffer and stream itself. W
 but with the width of 3 bytes. Notice how it is possible to insert signed data with two different encodings.
 
 ## BitParser
+
+## Error handling
+
+All functions in BitParser library are written with care for error handling. They return a value to notify that
+something went wrong, so it is very easy to make assertions and be sure everything is OK. Here is how you use it:
+```c
+#include "Stream.h"
+
+int main() {
+    uint8_t data1 = 0xAA, data2 = 0xBB, data3 = 0xCC, data4 = 0xDD;
+    uint8_t message[3] = {0};
+    Stream_T stream;
+
+    Status_T ret;
+    Stream_Init(&stream, message, sizeof(message), LITTLE);
+
+    ret = Stream_WriteBit(&stream, &data1, 4);
+    if(ret != STATUS_SUCCESS)
+        return 1;
+
+    ret = Stream_SeekBit(&stream, 8);
+    if(ret != STATUS_SUCCESS)
+        return 1;
+
+    ret = Stream_WriteBit(&stream, &data2, 4);
+    if(ret != STATUS_SUCCESS)
+        return 1;
+
+    ret = Stream_WriteBit(&stream, &data3, 4);
+    if(ret != STATUS_SUCCESS)
+        return 1;
+
+    ret = Stream_WriteBit(&stream, &data4, 4);
+    if(ret != STATUS_SUCCESS)
+        return 1;
+
+    printf("0x%02X 0x%02X 0x%02X\n", message[0], message[1], message[2]);
+}
+```
